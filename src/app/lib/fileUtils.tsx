@@ -1,9 +1,16 @@
-import { FileData } from "@/app/lib/appUtils";
 import { Prop } from "@/app/lib/propUtils";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
+
+export class FileData {
+  constructor(
+    public filename: string,
+    public prettyFilename: string,
+    public content: string
+  ) {}
+}
 
 export async function importFiles(
   props: Prop[],
