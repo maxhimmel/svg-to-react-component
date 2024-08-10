@@ -1,6 +1,6 @@
 "use client";
 
-import { FileData } from "@/app/lib/appUtils";
+import { FileData } from "@/app/lib/fileUtils";
 import { defaultProps, Prop } from "@/app/lib/propUtils";
 import { createContext, useContext, useState } from "react";
 

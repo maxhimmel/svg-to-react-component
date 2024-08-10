@@ -1,4 +1,4 @@
-import { FileData } from "@/app/lib/appUtils";
+import { FileData } from "@/app/lib/fileUtils";
 import JSZip from "jszip";
 
 export async function downloadFile(file: FileData) {

@@ -1,6 +1,6 @@
 import { CopyButton } from "@/app/components/copyButton";
-import { FileData } from "@/app/lib/appUtils";
 import { downloadFile } from "@/app/lib/downloadUtils";
+import { FileData } from "@/app/lib/fileUtils";
 
 export function FilePreview({
   file,
