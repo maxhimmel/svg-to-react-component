@@ -5,7 +5,7 @@ export function PropsTable() {
   const { props } = useApp();
 
   return (
-    <div className="overflow-x-auto border-8 border-base-200 rounded-3xl">
+    <div className="w-full overflow-x-auto border-8 border-base-200 rounded-3xl">
       <div className="flex flex-row pb-1 pl-4 bg-base-200">
         <h2 className="text-2xl font-bold">Props</h2>
         <AddPropButton className="btn btn-sm btn-ghost text-lg ml-auto" />
