@@ -71,9 +71,7 @@ function processFileContent(content: string) {
     }
   }
 
-  let serialized = xmlSerializer.serializeToString(svg);
-
-  return serialized;
+  return xmlSerializer.serializeToString(svg);
 }
 
 export function getComponentName(filename: string) {
@@ -101,18 +99,65 @@ function wrapInReactComponent({
     }`;
   }
 
-  const [propArgs, tsProps, attribProps] = Prop.convertToTypeScript(props);
-
-  const propMatches = content.match(/<svg[^>]*>/);
-  if (propMatches) {
-    const svgTag = propMatches[0];
-    const newSvgTag = svgTag.replace(">", ` ${attribProps}>`);
-    content = content.replace(svgTag, newSvgTag);
-  }
+  const [propArgs, tsProps, attribProps] = convertToTypeScript(props);
 
   return `export function ${componentName}({ ${propArgs} }: { ${tsProps} }) {
         return (
-            ${content}
+            ${insertAttributes(content, attribProps)}
         );
     }`;
+}
+
+function convertToTypeScript(props: Prop[]) {
+  let propArgs = props.map((prop) => prop.name);
+  let tsProps = props.map(
+    (prop) => `${prop.name}${prop.optional ? "?" : ""}: ${prop.type}`
+  );
+  let attribProps = props.map((prop) => `${prop.name}={${prop.name}}`);
+
+  const invalidIndices = new Set<number>();
+  props.reduce((acc, prop, index) => {
+    if (prop.name === "") {
+      acc.add(index);
+    }
+    return acc;
+  }, invalidIndices);
+
+  tsProps.reduce((acc, prop, index) => {
+    if (prop === "") {
+      acc.add(index);
+    }
+    return acc;
+  }, invalidIndices);
+
+  attribProps.reduce((acc, prop, index) => {
+    if (prop === "") {
+      acc.add(index);
+    }
+    return acc;
+  }, invalidIndices);
+
+  if (invalidIndices.size > 0) {
+    propArgs = propArgs.filter((_, index) => !invalidIndices.has(index));
+    tsProps = tsProps.filter((_, index) => !invalidIndices.has(index));
+    attribProps = attribProps.filter((_, index) => !invalidIndices.has(index));
+
+    invalidIndices.forEach((index) => {
+      console.error(`Prop #${index + 1} has missing inputs`);
+    });
+  }
+
+  return [propArgs.join(", "), tsProps.join("; "), attribProps.join(" ")];
+}
+
+function insertAttributes(content: string, attributes: string) {
+  const propMatches = content.match(/<svg[^>]*>/);
+
+  if (propMatches) {
+    const svgTag = propMatches[0];
+    const newSvgTag = svgTag.replace(">", ` ${attributes}>`);
+    return content.replace(svgTag, newSvgTag);
+  }
+
+  return content;
 }
