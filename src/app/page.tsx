@@ -4,7 +4,7 @@ import { FilePreview } from "@/app/components/filePreview";
 import { PropsTable } from "@/app/components/propsTable";
 import { useApp } from "@/app/hooks/useApp";
 import { downloadAllFiles } from "@/app/lib/downloadUtils";
-import { handleFile } from "@/app/lib/fileUtils";
+import { importFiles } from "@/app/lib/fileUtils";
 
 export default function Home() {
   const { files, setFiles, props } = useApp();
@@ -42,7 +42,7 @@ export default function Home() {
             <button
               type="submit"
               className="btn btn-lg btn-success"
-              onClick={async () => await handleFile(setFiles, props)}
+              onClick={async () => await importFiles(props, setFiles)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

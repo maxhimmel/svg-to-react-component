@@ -1,13 +1,13 @@
-import { FileData, wrapInReactComponent } from "@/app/lib/appUtils";
+import { FileData } from "@/app/lib/appUtils";
 import { Prop } from "@/app/lib/propUtils";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 
 const domParser = new DOMParser();
 const xmlSerializer = new XMLSerializer();
 
-export async function handleFile(
-  setFiles: (files: FileData[]) => void,
-  props: Prop[]
+export async function importFiles(
+  props: Prop[],
+  onFilesImported: (files: FileData[]) => void
 ) {
   const fileHandles = await showOpenFilePicker({
     multiple: true,
@@ -41,7 +41,7 @@ export async function handleFile(
     );
   }
 
-  setFiles(newFiles);
+  onFilesImported(newFiles);
 }
 
 function processFileContent(content: string) {
@@ -82,4 +82,37 @@ export function getComponentName(filename: string) {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join("");
+}
+
+function wrapInReactComponent({
+  componentName,
+  content,
+  props,
+}: {
+  componentName: string;
+  content: string;
+  props?: Prop[];
+}) {
+  if (!props || props.length === 0) {
+    return `export function ${componentName}() {
+      return (
+        ${content}
+      );
+    }`;
+  }
+
+  const [propArgs, tsProps, attribProps] = Prop.convertToTypeScript(props);
+
+  const propMatches = content.match(/<svg[^>]*>/);
+  if (propMatches) {
+    const svgTag = propMatches[0];
+    const newSvgTag = svgTag.replace(">", ` ${attribProps}>`);
+    content = content.replace(svgTag, newSvgTag);
+  }
+
+  return `export function ${componentName}({ ${propArgs} }: { ${tsProps} }) {
+        return (
+            ${content}
+        );
+    }`;
 }
