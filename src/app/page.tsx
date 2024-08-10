@@ -13,8 +13,8 @@ export default function Home() {
     <main className="pt-14">
       <div className="hero">
         <div className="hero-content flex flex-col">
-          <span className="text-4xl font-bold">
-            Convert SVG to React Component
+          <span className="text-4xl font-bold mb-4">
+            Convert SVGs into React Components
           </span>
 
           <div className="grid grid-flow-col auto-cols-fr gap-2">
@@ -79,7 +79,11 @@ export default function Home() {
           </div>
 
           <div className="w-full flex flex-col gap-2 bg-base-300 p-4 rounded-3xl">
-            {files.length === 0 && <div className="h-10 skeleton" />}
+            {files.length === 0 && (
+              <div className="h-10 skeleton text-center content-center font-extralight">
+                Add SVGs to get started!
+              </div>
+            )}
 
             {files.map((file, idx) => (
               <FilePreview
